@@ -1,5 +1,5 @@
 // js/api.js — Shared utilities for all pages
-const API = 'http://localhost:5000/api';
+const API = 'https://sjalhjarta-production-6404.up.railway.app/api';
 
 // ── Token Management ──
 const Auth = {

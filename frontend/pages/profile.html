@@ -260,7 +260,7 @@ async function uploadAvatar(input){
   const formData=new FormData(); formData.append('avatar',file);
   try{
     const token=Auth.getToken();
-    const res=await fetch('http://localhost:5000/api/profiles/avatar',{method:'POST',headers:{Authorization:`Bearer ${token}`},body:formData});
+    const res=await fetch('https://sjalhjarta-production-6404.up.railway.app/api/profiles/avatar',{method:'POST',headers:{Authorization:`Bearer ${token}`},body:formData});
     const data=await res.json();
     if(data.avatar_url) toast('✅','Foto uppladdat!','');
   }catch(e){ toast('❌','Fel',e.message); }
