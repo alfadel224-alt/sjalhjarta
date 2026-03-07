@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Min profil — Själ & Hjärta</title>
+<link rel="stylesheet" href="../css/shared.css">
+<style>
+.profile-layout { max-width:1000px; margin:0 auto; padding:2.5rem 5%; }
+.profile-grid { display:grid; grid-template-columns:300px 1fr; gap:2rem; align-items:start; }
+.profile-card { background:var(--surface); border:1px solid var(--glass-border); border-radius:20px; overflow:hidden; position:sticky; top:calc(var(--nav-h)+1rem); }
+.profile-cover { height:140px; background:linear-gradient(135deg,var(--pine),#3D5A4E); display:flex; align-items:center; justify-content:center; font-size:5rem; position:relative; }
+.profile-edit-cover { position:absolute; bottom:0.5rem; right:0.5rem; width:32px; height:32px; border-radius:50%; background:rgba(20,26,34,0.8); border:1px solid var(--glass-border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:0.85rem; }
+.profile-avatar-wrap { margin:-36px auto 0; width:72px; height:72px; position:relative; }
+.profile-avatar { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,var(--aurora1),var(--aurora2)); display:flex; align-items:center; justify-content:center; font-size:1.8rem; font-weight:500; color:var(--midnight); border:3px solid var(--surface); }
+.profile-avatar-edit { position:absolute; bottom:0; right:0; width:24px; height:24px; border-radius:50%; background:var(--aurora1); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:0.65rem; color:var(--midnight); }
+.profile-body { padding:1.2rem 1.4rem; text-align:center; }
+.profile-name-display { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; }
+.profile-meta { font-size:0.8rem; color:var(--fog); margin:0.3rem 0 0.8rem; }
+.profile-complete { height:4px; border-radius:2px; background:var(--glass-border); margin:0.8rem 0; overflow:hidden; }
+.profile-complete-bar { height:100%; background:linear-gradient(90deg,var(--aurora1),var(--aurora2)); border-radius:2px; transition:width 0.6s var(--ease); }
+.profile-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.5rem; margin-top:1rem; }
+.ps { text-align:center; padding:0.6rem; background:var(--glass); border-radius:var(--radius-sm); }
+.ps-n { font-family:'Cormorant Garamond',serif; font-size:1.3rem; color:var(--aurora1); }
+.ps-l { font-size:0.68rem; color:var(--fog); }
+
+.form-section { background:var(--surface); border:1px solid var(--glass-border); border-radius:20px; padding:1.8rem; margin-bottom:1.5rem; }
+.form-section-title { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:300; margin-bottom:1.4rem; display:flex; align-items:center; gap:0.6rem; }
+.tags-input { display:flex; flex-wrap:wrap; gap:0.5rem; background:rgba(247,245,242,0.05); border:1px solid var(--glass-border); border-radius:var(--radius-sm); padding:0.7rem; min-height:50px; }
+.interest-tag { background:rgba(127,191,170,0.12); border:1px solid rgba(127,191,170,0.25); border-radius:100px; padding:0.2rem 0.65rem 0.2rem 0.5rem; font-size:0.78rem; color:var(--aurora1); display:flex; align-items:center; gap:0.4rem; }
+.interest-tag button { background:none; border:none; color:var(--aurora1); cursor:pointer; font-size:0.8rem; padding:0; line-height:1; }
+.tag-add-input { background:none; border:none; color:var(--snow); font-size:0.82rem; outline:none; min-width:80px; flex:1; }
+.tag-add-input::placeholder { color:var(--fog); }
+
+.ai-analysis-box { background:linear-gradient(135deg,rgba(127,191,170,0.06),rgba(168,196,212,0.06)); border:1px solid rgba(127,191,170,0.18); border-radius:20px; padding:1.8rem; margin-bottom:1.5rem; }
+.ai-score-ring { width:80px; height:80px; position:relative; margin:0 auto 1rem; }
+.ai-score-num { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--aurora1); }
+.suggestion-item { display:flex; gap:0.8rem; padding:0.8rem 0; border-bottom:1px solid var(--glass-border); font-size:0.87rem; line-height:1.55; }
+.suggestion-item:last-child { border-bottom:none; }
+.suggestion-item::before { content:'→'; color:var(--aurora1); flex-shrink:0; }
+
+@media(max-width:800px){ .profile-grid{grid-template-columns:1fr} .profile-card{position:static} }
+</style>
+</head>
+<body>
+<div class="aurora"><span></span><span></span><span></span></div>
+
+<nav class="nav z2">
+  <a class="nav-logo" href="../index.html">Själ <em>&</em> Hjärta</a>
+  <ul class="nav-links">
+    <li><a href="app.html">Upptäck</a></li>
+    <li><a href="matches.html">Matchningar</a></li>
+    <li><a href="profile.html" class="active">Profil</a></li>
+    <li><a href="pricing.html">Uppgradera</a></li>
+  </ul>
+  <div class="nav-user">
+    <div class="nav-avatar" id="nav-avatar"></div>
+    <button class="btn btn-ghost btn-sm" data-action="logout">Logga ut</button>
+  </div>
+</nav>
+
+<div class="page z2">
+<div class="profile-layout">
+  <div style="margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between">
+    <div><h1 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300">Min <em style="color:var(--aurora1);font-style:italic">profil</em></h1><p style="color:var(--fog);font-size:0.87rem;margin-top:0.2rem">Fyll i din profil för bättre matchningar</p></div>
+    <button class="btn btn-primary" onclick="saveProfile()" id="save-btn">💾 Spara ändringar</button>
+  </div>
+
+  <div class="profile-grid">
+    <!-- LEFT CARD -->
+    <div>
+      <div class="profile-card">
+        <div class="profile-cover">
+          <span id="profile-emoji">🌲</span>
+        </div>
+        <div class="profile-avatar-wrap">
+          <div class="profile-avatar" id="profile-initial">?</div>
+          <button class="profile-avatar-edit" onclick="document.getElementById('avatar-upload').click()">📷</button>
+          <input type="file" id="avatar-upload" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
+        </div>
+        <div class="profile-body">
+          <div class="profile-name-display" id="display-name">Laddar...</div>
+          <div class="profile-meta" id="display-meta"></div>
+          <div class="profile-complete"><div class="profile-complete-bar" id="complete-bar" style="width:0%"></div></div>
+          <div style="font-size:0.75rem;color:var(--fog);margin-bottom:0.8rem"><span id="complete-pct">0%</span> profil ifylld</div>
+          <div class="profile-stats">
+            <div class="ps"><div class="ps-n" id="stat-likes">0</div><div class="ps-l">Gillade</div></div>
+            <div class="ps"><div class="ps-n" id="stat-matches">0</div><div class="ps-l">Matchn.</div></div>
+            <div class="ps"><div class="ps-n" id="stat-views">0</div><div class="ps-l">Visn.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-analysis-box mt-3" id="ai-box" style="display:none">
+        <div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:1.2rem">
+          <span style="font-size:1.3rem">✨</span>
+          <div><div style="font-weight:500;font-size:0.95rem">Stella AI-analys</div><div style="font-size:0.77rem;color:var(--fog)">Förbättringsförslag</div></div>
+        </div>
+        <div id="ai-suggestions-list"></div>
+        <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:1rem" onclick="runAIAnalysis()" id="ai-btn">🔄 Analysera profil</button>
+      </div>
+    </div>
+
+    <!-- RIGHT FORMS -->
+    <div>
+      <!-- Basic info -->
+      <div class="form-section">
+        <div class="form-section-title">👤 Grundläggande info</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Förnamn</label><input class="form-input" id="f-name" placeholder="Anna"></div>
+          <div class="form-group"><label class="form-label">Ålder</label><input class="form-input" id="f-age" type="number" placeholder="28" min="18"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Kön</label><select class="form-input" id="f-gender"><option value="">Välj...</option><option>Kvinna</option><option>Man</option><option>Icke-binär</option></select></div>
+          <div class="form-group"><label class="form-label">Söker</label><select class="form-input" id="f-seeking"><option value="">Välj...</option><option>Kvinna</option><option>Man</option><option>Alla kön</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Stad</label><input class="form-input" id="f-city" placeholder="Stockholm"></div>
+          <div class="form-group"><label class="form-label">Längd (cm)</label><input class="form-input" id="f-height" type="number" placeholder="170"></div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="form-section">
+        <div class="form-section-title">✍️ Om mig</div>
+        <div class="form-group"><label class="form-label">Presentation</label><textarea class="form-input" id="f-bio" rows="4" placeholder="Berätta om dig själv, vad du gillar och vad du söker..." style="resize:vertical"></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Yrke</label><input class="form-input" id="f-occupation" placeholder="Arkitekt"></div>
+          <div class="form-group"><label class="form-label">Utbildning</label><input class="form-input" id="f-education" placeholder="KTH"></div>
+        </div>
+      </div>
+
+      <!-- Interests -->
+      <div class="form-section">
+        <div class="form-section-title">🌿 Intressen</div>
+        <p style="font-size:0.83rem;color:var(--fog);margin-bottom:1rem">Lägg till intressen för bättre AI-matchning</p>
+        <div class="tags-input" id="interests-input">
+          <input class="tag-add-input" id="interest-new" placeholder="Lägg till intresse..." onkeydown="addInterest(event)">
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.8rem">
+          <span style="font-size:0.77rem;color:var(--fog)">Förslag:</span>
+          ${['Natur','Yoga','Matlagning','Jazz','Löpning','Konst','Litteratur','Segling','Musik','Filosofi','Design','Vandring'].map(t=>`<button class="filter-btn" style="padding:0.2rem 0.65rem;font-size:0.75rem" onclick="addInterestDirect('${t}')">${t}</button>`).join('')}
+        </div>
+      </div>
+
+      <!-- Values -->
+      <div class="form-section">
+        <div class="form-section-title">💎 Värderingar</div>
+        <div class="tags-input" id="values-input">
+          <input class="tag-add-input" id="value-new" placeholder="Lägg till värdering..." onkeydown="addValue(event)">
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.8rem">
+          <span style="font-size:0.77rem;color:var(--fog)">Förslag:</span>
+          ${['Familj','Ärlighet','Frihet','Natur','Kreativitet','Äventyr','Stabilitet','Humor','Empati','Lojalitet'].map(t=>`<button class="filter-btn" style="padding:0.2rem 0.65rem;font-size:0.75rem" onclick="addValueDirect('${t}')">${t}</button>`).join('')}
+        </div>
+      </div>
+
+      <!-- Danger zone -->
+      <div class="form-section" style="border-color:rgba(224,85,85,0.2)">
+        <div class="form-section-title" style="color:var(--danger)">⚠️ Kontoinställningar</div>
+        <div class="form-row">
+          <button class="btn btn-ghost" onclick="toggleVisibility()">👁 Dölj profil tillfälligt</button>
+          <button class="btn btn-danger" onclick="confirmDelete()">🗑 Radera konto</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="toast"><div class="toast-icon"></div><div><div class="toast-title"></div><div class="toast-desc"></div></div></div>
+
+<script src="../js/api.js"></script>
+<script>
+requireAuth(); initNav();
+const PROFILE_EMOJIS=['🌲','❄️','🌊','🏔️','🌙','🌿','⭐','🌸'];
+let profile={interests:[],values:[]};
+
+async function loadProfile(){
+  try{
+    const me=await get('/auth/me');
+    Auth.setUser(me);
+    const p=await get('/profiles/me');
+    profile=p;
+    fillForm(p,me);
+    renderTags('interests-input','interest-new',p.interests||[]);
+    renderTags('values-input','value-new',p.values||[]);
+    updateDisplayCard(p);
+    document.getElementById('nav-avatar').textContent=(me.first_name||me.email)[0].toUpperCase();
+    document.getElementById('ai-box').style.display='block';
+  }catch(e){ toast('❌','Fel',e.message); }
+}
+
+function fillForm(p,me){
+  document.getElementById('f-name').value=p.first_name||'';
+  document.getElementById('f-age').value=p.age||'';
+  document.getElementById('f-gender').value=p.gender||'';
+  document.getElementById('f-seeking').value=p.seeking||'';
+  document.getElementById('f-city').value=p.city||'';
+  document.getElementById('f-height').value=p.height_cm||'';
+  document.getElementById('f-bio').value=p.bio||'';
+  document.getElementById('f-occupation').value=p.occupation||'';
+  document.getElementById('f-education').value=p.education||'';
+}
+
+function updateDisplayCard(p){
+  document.getElementById('display-name').textContent=`${p.first_name||'Din profil'}${p.age?', '+p.age:''}`;
+  document.getElementById('profile-initial').textContent=(p.first_name||'?')[0].toUpperCase();
+  document.getElementById('display-meta').textContent=`${p.city||''}${p.occupation?' · '+p.occupation:''}`;
+  const fields=[p.first_name,p.age,p.gender,p.seeking,p.city,p.bio,p.occupation];
+  const filled=fields.filter(Boolean).length;
+  const pct=Math.round((filled/fields.length)*100);
+  document.getElementById('complete-bar').style.width=pct+'%';
+  document.getElementById('complete-pct').textContent=pct+'%';
+  document.getElementById('profile-emoji').textContent=PROFILE_EMOJIS[Math.floor(Math.random()*PROFILE_EMOJIS.length)];
+}
+
+// Tags
+function renderTags(containerId, inputId, tags){
+  const container=document.getElementById(containerId);
+  const input=document.getElementById(inputId);
+  container.querySelectorAll('.interest-tag').forEach(t=>t.remove());
+  tags.forEach(tag=>{
+    const el=document.createElement('div'); el.className='interest-tag';
+    el.innerHTML=`${tag}<button onclick="removeTag('${containerId}','${inputId}','${tag}')">×</button>`;
+    container.insertBefore(el,input);
+  });
+}
+
+function addInterest(e){ if(e.key==='Enter'||e.key===','){ e.preventDefault(); const v=e.target.value.trim().replace(',',''); if(v&&!profile.interests.includes(v)){ profile.interests=[...profile.interests,v]; renderTags('interests-input','interest-new',profile.interests); e.target.value=''; } } }
+function addInterestDirect(v){ if(!profile.interests.includes(v)){ profile.interests=[...profile.interests,v]; renderTags('interests-input','interest-new',profile.interests); } }
+function addValue(e){ if(e.key==='Enter'||e.key===','){ e.preventDefault(); const v=e.target.value.trim().replace(',',''); if(v&&!profile.values.includes(v)){ profile.values=[...profile.values,v]; renderTags('values-input','value-new',profile.values); e.target.value=''; } } }
+function addValueDirect(v){ if(!profile.values.includes(v)){ profile.values=[...profile.values,v]; renderTags('values-input','value-new',profile.values); } }
+function removeTag(cid,iid,tag){ if(cid.includes('interest')) profile.interests=profile.interests.filter(t=>t!==tag); else profile.values=profile.values.filter(t=>t!==tag); renderTags(cid,iid,cid.includes('interest')?profile.interests:profile.values); }
+
+async function saveProfile(){
+  const btn=document.getElementById('save-btn'); btn.disabled=true; btn.textContent='Sparar...';
+  try{
+    const data={ first_name:document.getElementById('f-name').value, age:parseInt(document.getElementById('f-age').value)||null, gender:document.getElementById('f-gender').value, seeking:document.getElementById('f-seeking').value, city:document.getElementById('f-city').value, height_cm:parseInt(document.getElementById('f-height').value)||null, bio:document.getElementById('f-bio').value, occupation:document.getElementById('f-occupation').value, education:document.getElementById('f-education').value, interests:profile.interests, values:profile.values };
+    const updated=await put('/profiles/me',data);
+    profile=updated; updateDisplayCard(updated);
+    toast('✅','Sparat!','Din profil har uppdaterats.');
+  }catch(e){ toast('❌','Fel',e.message); }
+  finally{ btn.disabled=false; btn.innerHTML='💾 Spara ändringar'; }
+}
+
+async function runAIAnalysis(){
+  const btn=document.getElementById('ai-btn'); btn.disabled=true; btn.textContent='✨ Analyserar...';
+  try{
+    const r=await post('/ai/analyze-profile',{});
+    const el=document.getElementById('ai-suggestions-list');
+    el.innerHTML=`<div style="font-size:1.8rem;font-weight:300;font-family:'Cormorant Garamond',serif;color:var(--aurora1);margin-bottom:0.5rem">${r.score}/100</div><div style="font-size:0.77rem;color:var(--fog);margin-bottom:1rem">Profilpoäng</div>`;
+    if(r.suggestions) el.innerHTML+=r.suggestions.map(s=>`<div class="suggestion-item">${s}</div>`).join('');
+    toast('✨','Analys klar!','Stella har analyserat din profil.');
+  }catch(e){ toast('❌','Fel','Analysen misslyckades.'); }
+  finally{ btn.disabled=false; btn.innerHTML='🔄 Analysera profil'; }
+}
+
+async function uploadAvatar(input){
+  const file=input.files[0]; if(!file) return;
+  const formData=new FormData(); formData.append('avatar',file);
+  try{
+    const token=Auth.getToken();
+    const res=await fetch('http://localhost:5000/api/profiles/avatar',{method:'POST',headers:{Authorization:`Bearer ${token}`},body:formData});
+    const data=await res.json();
+    if(data.avatar_url) toast('✅','Foto uppladdat!','');
+  }catch(e){ toast('❌','Fel',e.message); }
+}
+
+function toggleVisibility(){ toast('👁','Profil dold','Du syns inte för andra just nu.'); }
+function confirmDelete(){ if(confirm('Är du säker? Detta kan inte ångras.')) toast('🗑','Radering begärd','Kontakta support för att slutföra.'); }
+
+loadProfile();
+</script>
+</body>
+</html>

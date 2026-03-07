@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Själ & Hjärta — AI-driven dejting i Sverige</title>
+<link rel="stylesheet" href="css/shared.css">
+<style>
+.hero { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8rem 5% 5rem; }
+.hero-badge { display:inline-flex; align-items:center; gap:0.5rem; background:var(--glass); border:1px solid var(--glass-border); border-radius:100px; padding:0.4rem 1.1rem; font-size:0.75rem; letter-spacing:0.12em; color:var(--aurora1); text-transform:uppercase; margin-bottom:2rem; }
+.hero h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(3.5rem,9vw,9rem); font-weight:300; line-height:0.95; letter-spacing:-0.02em; margin-bottom:2rem; animation:fadeUp 0.9s var(--ease) 0.1s both; }
+.hero h1 em { font-style:italic; color:var(--aurora1); }
+.hero-sub { font-size:1.05rem; color:var(--fog); max-width:480px; line-height:1.7; margin:0 auto 3rem; animation:fadeUp 0.9s var(--ease) 0.2s both; }
+.hero-actions { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; animation:fadeUp 0.9s var(--ease) 0.3s both; }
+.floating-cards { display:flex; gap:1.2rem; justify-content:center; margin-top:5rem; flex-wrap:wrap; animation:fadeUp 0.9s var(--ease) 0.4s both; }
+.fcard { background:var(--glass); border:1px solid var(--glass-border); backdrop-filter:blur(16px); border-radius:var(--radius); padding:1.4rem 1.5rem; width:170px; transition:transform 0.5s var(--ease); }
+.fcard:hover { transform:translateY(-10px) !important; }
+.fcard:nth-child(2) { transform:translateY(-14px); }
+.fcard-avatar { width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,var(--aurora1),var(--aurora3)); display:flex; align-items:center; justify-content:center; font-size:1.6rem; margin-bottom:0.8rem; }
+.fcard-name { font-family:'Cormorant Garamond',serif; font-size:1.1rem; margin-bottom:0.15rem; }
+.fcard-info { font-size:0.77rem; color:var(--fog); margin-bottom:0.7rem; }
+.fcard-score { font-size:0.73rem; color:var(--aurora1); }
+
+/* Stats */
+.stats { padding:3.5rem 5%; border-top:1px solid var(--glass-border); border-bottom:1px solid var(--glass-border); display:flex; justify-content:center; gap:5rem; flex-wrap:wrap; }
+.stat-n { font-family:'Cormorant Garamond',serif; font-size:2.8rem; font-weight:300; color:var(--aurora1); display:block; line-height:1; }
+.stat-l { font-size:0.78rem; color:var(--fog); letter-spacing:0.08em; margin-top:0.25rem; }
+
+/* Steps */
+.steps { max-width:1100px; margin:0 auto; padding:7rem 5%; }
+.steps-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1.4rem; margin-top:4rem; }
+.step { padding:2rem; border-radius:var(--radius); border:1px solid var(--glass-border); background:var(--glass); transition:transform 0.4s var(--ease),border-color 0.3s; }
+.step:hover { transform:translateY(-5px); border-color:rgba(127,191,170,0.25); }
+.step-n { font-family:'Cormorant Garamond',serif; font-size:3.5rem; color:var(--aurora1); opacity:0.3; line-height:1; margin-bottom:1rem; }
+.step-t { font-size:1rem; font-weight:500; margin-bottom:0.6rem; }
+.step-d { font-size:0.88rem; color:var(--fog); line-height:1.6; }
+
+/* Features */
+.features { background:linear-gradient(180deg,transparent,rgba(127,191,170,0.04),transparent); padding:7rem 5%; }
+.features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:1.3rem; margin-top:4rem; max-width:1100px; margin-left:auto; margin-right:auto; }
+.feat { padding:2rem; border-radius:var(--radius); border:1px solid var(--glass-border); transition:transform 0.4s var(--ease),border-color 0.3s; }
+.feat:hover { transform:translateY(-4px); border-color:rgba(127,191,170,0.2); }
+.feat.hl { background:linear-gradient(135deg,rgba(127,191,170,0.06),rgba(168,196,212,0.06)); }
+.feat-icon { font-size:1.6rem; width:50px; height:50px; background:var(--glass); border:1px solid var(--glass-border); border-radius:14px; display:flex; align-items:center; justify-content:center; margin-bottom:1.1rem; }
+.feat-t { font-size:1rem; font-weight:500; margin-bottom:0.5rem; }
+.feat-d { font-size:0.87rem; color:var(--fog); line-height:1.65; }
+
+/* Testimonials */
+.testimonials { max-width:1100px; margin:0 auto; padding:6rem 5%; }
+.test-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.3rem; margin-top:4rem; }
+.test-card { background:var(--glass); border:1px solid var(--glass-border); border-radius:var(--radius); padding:1.8rem; transition:transform 0.4s var(--ease); }
+.test-card:hover { transform:translateY(-4px); }
+.test-stars { color:var(--gold); font-size:0.78rem; margin-bottom:0.9rem; }
+.test-quote { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-style:italic; line-height:1.65; color:var(--birch); margin-bottom:1.3rem; }
+.test-quote::before { content:'"'; color:var(--aurora1); font-size:1.8rem; line-height:0; vertical-align:-0.5em; margin-right:0.2rem; }
+.test-author { display:flex; align-items:center; gap:0.8rem; }
+.test-av { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,var(--aurora1),var(--aurora3)); display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+
+/* CTA */
+.cta-sec { padding:7rem 5%; text-align:center; position:relative; overflow:hidden; }
+.cta-glow { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:600px; height:300px; background:radial-gradient(ellipse,rgba(127,191,170,0.1),transparent 70%); pointer-events:none; }
+.cta-sec h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,6vw,5.5rem); font-weight:300; margin-bottom:1.3rem; }
+.cta-sec h2 em { font-style:italic; color:var(--aurora1); }
+.cta-sec p { color:var(--fog); margin-bottom:2.5rem; }
+
+/* Footer */
+footer { padding:4rem 5% 2.5rem; border-top:1px solid var(--glass-border); }
+.footer-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:3rem; margin-bottom:3rem; }
+.footer-brand p { font-size:0.86rem; color:var(--fog); line-height:1.65; max-width:270px; margin-top:0.8rem; }
+.footer-col h4 { font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--fog); margin-bottom:1.1rem; }
+.footer-col a { display:block; color:var(--fog); font-size:0.88rem; margin-bottom:0.55rem; transition:color 0.3s; }
+.footer-col a:hover { color:var(--snow); }
+.footer-bottom { max-width:1100px; margin:0 auto; padding-top:2rem; border-top:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; }
+.footer-bottom p { font-size:0.78rem; color:var(--fog); }
+.socials { display:flex; gap:0.8rem; }
+.soc { width:34px; height:34px; border-radius:50%; background:var(--glass); border:1px solid var(--glass-border); display:flex; align-items:center; justify-content:center; font-size:0.85rem; transition:all 0.3s; color:var(--fog); }
+.soc:hover { background:rgba(247,245,242,0.1); color:var(--snow); transform:scale(1.1); }
+
+/* Modal tabs */
+.modal-tabs { display:flex; border:1px solid var(--glass-border); border-radius:12px; overflow:hidden; margin-bottom:1.8rem; }
+.mtab { flex:1; padding:0.65rem; background:none; border:none; color:var(--fog); font-size:0.88rem; cursor:pointer; transition:all 0.3s; }
+.mtab.active { background:linear-gradient(135deg,rgba(127,191,170,0.18),rgba(168,196,212,0.18)); color:var(--snow); }
+
+@media(max-width:900px) { .footer-inner { grid-template-columns:1fr 1fr; } .floating-cards { display:none; } }
+@media(max-width:600px) { .stats { gap:2.5rem; } .footer-inner { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="aurora"><span></span><span></span><span></span></div>
+
+<!-- NAV -->
+<nav class="nav z2">
+  <div class="nav-logo">Själ <em>&</em> Hjärta</div>
+  <ul class="nav-links">
+    <li><a href="#features">Funktioner</a></li>
+    <li><a href="pages/pricing.html">Priser</a></li>
+    <li><a href="#" onclick="openModal('login')">Logga in</a></li>
+  </ul>
+  <button class="btn btn-primary btn-sm" onclick="openModal('signup')">Börja gratis →</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero z2">
+  <div class="hero-badge">✦ AI-driven matchning · Lanserad i Sverige</div>
+  <h1>Hitta din<br><em>sanna match</em><br>med AI</h1>
+  <p class="hero-sub">Självä & Hjärta kombinerar nordisk enkelhet med avancerad AI för att hitta din perfekta partner — bortom ytligheter.</p>
+  <div class="hero-actions">
+    <button class="btn btn-primary btn-lg" onclick="openModal('signup')">Skapa profil gratis →</button>
+    <button class="btn btn-ghost btn-lg" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Läs mer</button>
+  </div>
+  <div class="floating-cards">
+    <div class="fcard"><div class="fcard-avatar">🌲</div><div class="fcard-name">Erik, 28</div><div class="fcard-info">Stockholm · Arkitekt</div><div class="fcard-score">✦ 97% matchning</div></div>
+    <div class="fcard"><div class="fcard-avatar">❄️</div><div class="fcard-name">Maja, 26</div><div class="fcard-info">Göteborg · Läkare</div><div class="fcard-score">✦ 94% matchning</div></div>
+    <div class="fcard"><div class="fcard-avatar">🌊</div><div class="fcard-name">Linn, 31</div><div class="fcard-info">Malmö · Journalist</div><div class="fcard-score">✦ 91% matchning</div></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats z2">
+  <div class="stat"><span class="stat-n" id="c1">0</span><div class="stat-l">Aktiva användare</div></div>
+  <div class="stat"><span class="stat-n" id="c2">0</span><div class="stat-l">Lyckliga par</div></div>
+  <div class="stat"><span class="stat-n" id="c3">0</span><div class="stat-l">AI-matchningar/dag</div></div>
+  <div class="stat"><span class="stat-n" id="c4">0%</span><div class="stat-l">Nöjdhetsgrad</div></div>
+</div>
+
+<!-- STEPS -->
+<div class="steps z2">
+  <span class="section-tag">✦ Hur det fungerar</span>
+  <h2 class="section-title">Tre steg till <em>kärleken</em></h2>
+  <div class="steps-grid">
+    <div class="step"><div class="step-n">01</div><div class="step-t">Skapa din profil</div><div class="step-d">Berätta om dig med ord och bilder. AI bygger automatiskt din personlighetsprofil.</div></div>
+    <div class="step"><div class="step-n">02</div><div class="step-t">AI analyserar & matchar</div><div class="step-d">Vår AI studerar kompatibilitet på djupet — värderingar, humor och livsstil.</div></div>
+    <div class="step"><div class="step-n">03</div><div class="step-t">Träffa din match</div><div class="step-d">Chatta med AI-coachstöd och boka er första träff.</div></div>
+    <div class="step"><div class="step-n">04</div><div class="step-t">Väx tillsammans</div><div class="step-d">Relationsinsikter håller gnistan levande länge efter den första dejten.</div></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="features z2" id="features">
+  <div style="max-width:1100px;margin:0 auto">
+    <span class="section-tag">✦ Funktioner</span>
+    <h2 class="section-title">Byggt för <em>genuina</em> relationer</h2>
+    <div class="features-grid">
+      <div class="feat hl"><div class="feat-icon">🧠</div><div class="feat-t">Djup AI-analys</div><div class="feat-d">Vår AI kartlägger kärnvärden, kommunikationsstil och långsiktiga mål för verklig kompatibilitet.</div></div>
+      <div class="feat"><div class="feat-icon">🔒</div><div class="feat-t">Verifierade profiler</div><div class="feat-d">100% äkta användare. Alla verifieras manuellt och via AI för maximal trygghet.</div></div>
+      <div class="feat"><div class="feat-icon">💬</div><div class="feat-t">Stella AI-coach</div><div class="feat-d">Din personliga kärlekscoach hjälper dig formulera meddelanden och förbättra din profil.</div></div>
+      <div class="feat"><div class="feat-icon">📍</div><div class="feat-t">Smarta dejttips</div><div class="feat-d">AI föreslår perfekta mötesplatser baserat på era gemensamma intressen.</div></div>
+      <div class="feat hl"><div class="feat-icon">🌙</div><div class="feat-t">GDPR & Integritet</div><div class="feat-d">Dina data tillhör dig. Vi säljer aldrig information och GDPR-compliance är vår kärna.</div></div>
+      <div class="feat"><div class="feat-icon">🎯</div><div class="feat-t">Kompatibilitetspoäng</div><div class="feat-d">Varje match får en detaljerad rapport — se exakt varför ni passar ihop.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="testimonials z2">
+  <span class="section-tag">✦ Berättelser</span>
+  <h2 class="section-title">De hittade <em>kärleken</em></h2>
+  <div class="test-grid">
+    <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-quote">Jag hade gett upp hoppet om onlinedejting. Själ & Hjärta matchade mig med Tobias på tredje dagen — vi gifte oss i somras.</div><div class="test-author"><div class="test-av">🌸</div><div><div style="font-size:0.9rem;font-weight:500">Astrid, 31</div><div style="font-size:0.77rem;color:var(--fog)">Stockholm</div></div></div></div>
+    <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-quote">AI-coachen Stella hjälpte mig bli mer öppen. Nu är jag och Sofia ihop sedan ett år tillbaka.</div><div class="test-author"><div class="test-av">🏔️</div><div><div style="font-size:0.9rem;font-weight:500">Marcus, 34</div><div style="font-size:0.77rem;color:var(--fog)">Göteborg</div></div></div></div>
+    <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-quote">Ingen ytlig swipe-kultur här. Appen förstod vad jag verkligen sökte. Bästa investeringen jag gjort.</div><div class="test-author"><div class="test-av">🌊</div><div><div style="font-size:0.9rem;font-weight:500">Hanna, 28</div><div style="font-size:0.77rem;color:var(--fog)">Malmö</div></div></div></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-sec z2">
+  <div class="cta-glow"></div>
+  <span class="section-tag">✦ Kom igång</span>
+  <h2>Din <em>match</em><br>väntar på dig</h2>
+  <p>Gratis att börja. Ingen kreditkortsuppgift krävs.</p>
+  <button class="btn btn-primary btn-lg" onclick="openModal('signup')">Skapa din profil gratis →</button>
+</div>
+
+<!-- FOOTER -->
+<footer class="z2">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-logo" style="font-family:'Cormorant Garamond',serif;font-size:1.4rem">Själ <em style="color:var(--aurora1);font-style:italic">&</em> Hjärta</div>
+      <p>Sveriges mest genomtänkta dejtingplattform — där äkta kärlek börjar med äkta matchning.</p>
+    </div>
+    <div class="footer-col"><h4>Produkt</h4><a href="#">Hur det fungerar</a><a href="pages/pricing.html">Prissättning</a><a href="#">Säkerhet</a></div>
+    <div class="footer-col"><h4>Företag</h4><a href="#">Om oss</a><a href="#">Karriär</a><a href="#">Press</a><a href="#">Kontakt</a></div>
+    <div class="footer-col"><h4>Juridik</h4><a href="#">Integritetspolicy</a><a href="#">Användarvillkor</a><a href="#">GDPR</a></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Själ & Hjärta AB. Alla rättigheter förbehållna.</p>
+    <div class="socials"><a class="soc" href="#">𝕏</a><a class="soc" href="#">in</a><a class="soc" href="#">ig</a></div>
+  </div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="authContent"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><div class="toast-icon"></div><div><div class="toast-title"></div><div class="toast-desc"></div></div></div>
+
+<script src="js/api.js"></script>
+<script>
+// Redirect if already logged in
+if (Auth.isLoggedIn()) window.location.href = 'pages/app.html';
+
+// Counter animation
+function animCount(el, end, suffix='') {
+  let v=0, step=end/70;
+  const t=setInterval(()=>{ v+=step; if(v>=end){el.textContent=Math.floor(end).toLocaleString('sv-SE')+suffix;clearInterval(t);}else el.textContent=Math.floor(v).toLocaleString('sv-SE')+suffix; },28);
+}
+const obs=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      animCount(document.getElementById('c1'),42800);animCount(document.getElementById('c2'),8340);
+      animCount(document.getElementById('c3'),1250);animCount(document.getElementById('c4'),94,'%');
+      obs.disconnect();
+    }
+  });
+},{threshold:0.3});
+obs.observe(document.querySelector('.stats'));
+
+// Modal
+function openModal(type){
+  document.getElementById('authContent').innerHTML = type==='signup' ? signupHTML() : loginHTML();
+  document.getElementById('authModal').classList.add('open');
+}
+function closeModal(){ document.getElementById('authModal').classList.remove('open'); }
+function closeModalOutside(e){ if(e.target.id==='authModal') closeModal(); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+function signupHTML(){ return `
+  <div class="modal-tabs"><button class="mtab" onclick="openModal('login')">Logga in</button><button class="mtab active">Registrera</button></div>
+  <div class="modal-title">Börja din resa</div>
+  <div class="modal-sub">Gratis forever · Ingen kreditkortsuppgift</div>
+  <div class="form-row">
+    <div class="form-group"><label class="form-label">Förnamn</label><input class="form-input" id="r-name" placeholder="Anna"></div>
+    <div class="form-group"><label class="form-label">Ålder</label><input class="form-input" id="r-age" type="number" placeholder="25" min="18"></div>
+  </div>
+  <div class="form-group"><label class="form-label">E-post</label><input class="form-input" id="r-email" type="email" placeholder="du@email.se"></div>
+  <div class="form-group"><label class="form-label">Lösenord</label><input class="form-input" id="r-pass" type="password" placeholder="Minst 8 tecken"></div>
+  <div class="form-row">
+    <div class="form-group"><label class="form-label">Kön</label><select class="form-input" id="r-gender"><option value="">Välj...</option><option>Kvinna</option><option>Man</option><option>Icke-binär</option></select></div>
+    <div class="form-group"><label class="form-label">Söker</label><select class="form-input" id="r-seeking"><option value="">Välj...</option><option>Kvinna</option><option>Man</option><option>Alla kön</option></select></div>
+  </div>
+  <div class="form-group"><label class="form-label">Stad</label><input class="form-input" id="r-city" placeholder="Stockholm"></div>
+  <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" id="r-btn" onclick="doRegister()">Skapa konto gratis →</button>
+  <p style="text-align:center;font-size:0.8rem;color:var(--fog);margin-top:1rem">Redan konto? <a href="#" onclick="openModal('login')" style="color:var(--aurora1)">Logga in</a></p>
+`;}
+
+function loginHTML(){ return `
+  <div class="modal-tabs"><button class="mtab active">Logga in</button><button class="mtab" onclick="openModal('signup')">Registrera</button></div>
+  <div class="modal-title">Välkommen hem</div>
+  <div class="modal-sub">Vi har saknat dig 💙</div>
+  <div class="form-group"><label class="form-label">E-post</label><input class="form-input" id="l-email" type="email" placeholder="du@email.se"></div>
+  <div class="form-group"><label class="form-label">Lösenord</label><input class="form-input" id="l-pass" type="password" placeholder="••••••••"></div>
+  <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" id="l-btn" onclick="doLogin()">Logga in →</button>
+  <p style="text-align:center;font-size:0.8rem;color:var(--fog);margin-top:1rem"><a href="#" style="color:var(--aurora1)">Glömt lösenord?</a> · <a href="#" onclick="openModal('signup')" style="color:var(--aurora1)">Skapa konto</a></p>
+`;}
+
+async function doRegister(){
+  const btn=document.getElementById('r-btn');
+  btn.disabled=true; btn.textContent='Skapar konto...';
+  try{
+    const data=await post('/auth/register',{
+      first_name:document.getElementById('r-name').value,
+      age:parseInt(document.getElementById('r-age').value),
+      email:document.getElementById('r-email').value,
+      password:document.getElementById('r-pass').value,
+      gender:document.getElementById('r-gender').value,
+      seeking:document.getElementById('r-seeking').value,
+      city:document.getElementById('r-city').value,
+    });
+    Auth.setToken(data.token); Auth.setUser(data.user);
+    closeModal(); toast('🎉','Välkommen!','Din profil skapas...');
+    setTimeout(()=>window.location.href='pages/profile.html',800);
+  }catch(e){ toast('❌','Fel',e.message); btn.disabled=false; btn.textContent='Skapa konto gratis →'; }
+}
+
+async function doLogin(){
+  const btn=document.getElementById('l-btn');
+  btn.disabled=true; btn.textContent='Loggar in...';
+  try{
+    const data=await post('/auth/login',{email:document.getElementById('l-email').value,password:document.getElementById('l-pass').value});
+    Auth.setToken(data.token); Auth.setUser(data.user);
+    closeModal(); toast('👋','Välkommen tillbaka!','');
+    setTimeout(()=>window.location.href='pages/app.html',600);
+  }catch(e){ toast('❌','Fel',e.message); btn.disabled=false; btn.textContent='Logga in →'; }
+}
+</script>
+</body>
+</html>

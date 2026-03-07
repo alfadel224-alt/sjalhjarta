@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — Själ & Hjärta</title>
+<link rel="stylesheet" href="../css/shared.css">
+<style>
+.admin-layout { display:grid; grid-template-columns:230px 1fr; min-height:100vh; padding-top:var(--nav-h); }
+.admin-sidebar { background:var(--surface); border-right:1px solid var(--glass-border); padding:1.5rem 1rem; position:sticky; top:var(--nav-h); height:calc(100vh - var(--nav-h)); overflow-y:auto; }
+.admin-nav { list-style:none; }
+.admin-nav li a { display:flex; align-items:center; gap:0.7rem; padding:0.65rem 0.8rem; border-radius:var(--radius-sm); color:var(--fog); font-size:0.88rem; margin-bottom:0.2rem; transition:all 0.3s; }
+.admin-nav li a:hover, .admin-nav li a.active { background:rgba(127,191,170,0.1); color:var(--snow); }
+.admin-nav li a.active { border-left:2px solid var(--aurora1); padding-left:calc(0.8rem - 2px); }
+.admin-section-label { font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--fog); padding:0.8rem 0.8rem 0.4rem; margin-top:0.8rem; }
+
+.admin-main { padding:2rem 2.5rem; overflow-y:auto; }
+.admin-header { margin-bottom:2rem; }
+.admin-header h1 { font-family:'Cormorant Garamond',serif; font-size:1.9rem; font-weight:300; }
+.admin-header p { color:var(--fog); font-size:0.87rem; margin-top:0.2rem; }
+
+.stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:2rem; }
+.stat-card { background:var(--surface); border:1px solid var(--glass-border); border-radius:var(--radius); padding:1.3rem 1.5rem; }
+.stat-card-num { font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:300; color:var(--aurora1); line-height:1; }
+.stat-card-label { font-size:0.78rem; color:var(--fog); margin-top:0.3rem; }
+.stat-card-change { font-size:0.75rem; color:var(--success); margin-top:0.2rem; }
+
+.data-table { background:var(--surface); border:1px solid var(--glass-border); border-radius:var(--radius); overflow:hidden; }
+.table-header { padding:1.2rem 1.5rem; border-bottom:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.8rem; }
+.table-header h3 { font-size:1rem; font-weight:500; }
+.table-search { background:rgba(247,245,242,0.05); border:1px solid var(--glass-border); border-radius:var(--radius-sm); padding:0.5rem 0.9rem; color:var(--snow); font-size:0.85rem; outline:none; width:200px; }
+.table-search::placeholder { color:var(--fog); }
+.table-filters { display:flex; gap:0.5rem; }
+table { width:100%; border-collapse:collapse; }
+thead tr { border-bottom:1px solid var(--glass-border); }
+th { padding:0.8rem 1.2rem; text-align:left; font-size:0.74rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--fog); font-weight:400; }
+td { padding:0.85rem 1.2rem; font-size:0.87rem; border-bottom:1px solid rgba(247,245,242,0.04); }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(247,245,242,0.02); }
+.user-cell { display:flex; align-items:center; gap:0.7rem; }
+.user-av { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--aurora1),var(--aurora3)); display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:500; color:var(--midnight); flex-shrink:0; }
+.action-group { display:flex; gap:0.4rem; }
+.act-btn { padding:0.25rem 0.7rem; border-radius:var(--radius-sm); border:1px solid var(--glass-border); background:var(--glass); color:var(--fog); font-size:0.75rem; cursor:pointer; transition:all 0.3s; }
+.act-btn:hover { color:var(--snow); background:rgba(247,245,242,0.1); }
+.act-btn.danger { border-color:rgba(224,85,85,0.3); color:var(--danger); }
+.act-btn.danger:hover { background:rgba(224,85,85,0.12); }
+.act-btn.success { border-color:rgba(94,189,138,0.3); color:var(--success); }
+.act-btn.success:hover { background:rgba(94,189,138,0.12); }
+
+.tab-btns { display:flex; gap:0; border:1px solid var(--glass-border); border-radius:var(--radius-sm); overflow:hidden; margin-bottom:1.5rem; }
+.tab-btn { flex:1; padding:0.55rem; background:none; border:none; color:var(--fog); font-size:0.83rem; cursor:pointer; transition:all 0.3s; }
+.tab-btn.active { background:rgba(127,191,170,0.12); color:var(--snow); }
+
+.pagination { display:flex; justify-content:flex-end; align-items:center; gap:0.5rem; padding:1rem 1.2rem; border-top:1px solid var(--glass-border); }
+.pg-btn { width:32px; height:32px; border-radius:var(--radius-sm); border:1px solid var(--glass-border); background:var(--glass); color:var(--fog); font-size:0.85rem; cursor:pointer; transition:all 0.3s; }
+.pg-btn:hover, .pg-btn.active { background:rgba(127,191,170,0.12); color:var(--snow); border-color:rgba(127,191,170,0.3); }
+
+@media(max-width:900px){ .admin-layout{grid-template-columns:1fr} .admin-sidebar{display:none} }
+</style>
+</head>
+<body>
+<div class="aurora"><span></span><span></span><span></span></div>
+
+<nav class="nav z2">
+  <a class="nav-logo" href="../index.html">Själ <em>&</em> Hjärta</a>
+  <ul class="nav-links">
+    <li><a href="#">⚙️ Admin</a></li>
+    <li><a href="app.html">← Tillbaka till app</a></li>
+  </ul>
+  <div class="nav-user">
+    <span class="badge badge-aurora">Admin</span>
+    <div class="nav-avatar" id="nav-avatar"></div>
+    <button class="btn btn-ghost btn-sm" data-action="logout">Logga ut</button>
+  </div>
+</nav>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="admin-section-label">Översikt</div>
+    <ul class="admin-nav">
+      <li><a href="#" class="active" onclick="showTab('dashboard',this)">📊 Dashboard</a></li>
+      <li><a href="#" onclick="showTab('users',this)">👥 Användare</a></li>
+      <li><a href="#" onclick="showTab('matches',this)">💌 Matchningar</a></li>
+    </ul>
+    <div class="admin-section-label">Ekonomi</div>
+    <ul class="admin-nav">
+      <li><a href="#" onclick="showTab('payments',this)">💳 Betalningar</a></li>
+    </ul>
+    <div class="admin-section-label">Moderation</div>
+    <ul class="admin-nav">
+      <li><a href="#" onclick="showTab('reports',this)">🚨 Anmälningar</a></li>
+    </ul>
+    <div style="padding:1rem;margin-top:auto">
+      <div style="font-size:0.75rem;color:var(--fog);line-height:1.5">Själ & Hjärta<br>Admin Panel v1.0</div>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard">
+      <div class="admin-header">
+        <h1>Dashboard <em style="color:var(--aurora1);font-style:italic">översikt</em></h1>
+        <p id="admin-date"></p>
+      </div>
+      <div class="stats-row" id="stats-row">
+        <div class="stat-card"><div class="stat-card-num" id="s-users">—</div><div class="stat-card-label">Totala användare</div><div class="stat-card-change" id="s-today"></div></div>
+        <div class="stat-card"><div class="stat-card-num" id="s-active">—</div><div class="stat-card-label">Aktiva konton</div></div>
+        <div class="stat-card"><div class="stat-card-num" id="s-matches">—</div><div class="stat-card-label">Totala matchningar</div></div>
+        <div class="stat-card"><div class="stat-card-num" id="s-mutual">—</div><div class="stat-card-label">Ömsesidiga matchn.</div></div>
+        <div class="stat-card"><div class="stat-card-num" id="s-msgs">—</div><div class="stat-card-label">Meddelanden</div></div>
+        <div class="stat-card"><div class="stat-card-num" id="s-revenue">—</div><div class="stat-card-label">Total intäkt (SEK)</div></div>
+      </div>
+      <div class="data-table">
+        <div class="table-header"><h3>Senaste aktivitet</h3><span style="font-size:0.82rem;color:var(--fog)">Realtidsdata</span></div>
+        <div style="padding:2rem;text-align:center;color:var(--fog);font-size:0.87rem" id="activity-log">Laddar aktivitetslogg...</div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div id="tab-users" style="display:none">
+      <div class="admin-header"><h1>Användare</h1><p>Hantera alla registrerade användare</p></div>
+      <div class="data-table">
+        <div class="table-header">
+          <h3>Alla användare <span id="users-count" style="font-size:0.8rem;color:var(--fog)"></span></h3>
+          <div style="display:flex;gap:0.7rem;align-items:center">
+            <input class="table-search" id="users-search" placeholder="Sök e-post eller namn..." oninput="debounceSearch(this.value)">
+            <div class="tab-btns" style="margin:0;font-size:0.78rem">
+              <button class="tab-btn active" data-ufilter="all" onclick="setUserFilter(this,'all')">Alla</button>
+              <button class="tab-btn" data-ufilter="banned" onclick="setUserFilter(this,'banned')">Banned</button>
+              <button class="tab-btn" data-ufilter="premium" onclick="setUserFilter(this,'premium')">Premium</button>
+              <button class="tab-btn" data-ufilter="new" onclick="setUserFilter(this,'new')">Nya</button>
+            </div>
+          </div>
+        </div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th>Användare</th><th>E-post</th><th>Plan</th><th>Status</th><th>Registrerad</th><th>Åtgärder</th></tr></thead>
+          <tbody id="users-tbody"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--fog)">Laddar...</td></tr></tbody>
+        </table></div>
+        <div class="pagination" id="users-pagination"></div>
+      </div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div id="tab-payments" style="display:none">
+      <div class="admin-header"><h1>Betalningar</h1><p>Transaktionshistorik och intäkter</p></div>
+      <div class="data-table">
+        <div class="table-header"><h3>Alla transaktioner</h3></div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th>Användare</th><th>Plan</th><th>Belopp</th><th>Status</th><th>Datum</th></tr></thead>
+          <tbody id="payments-tbody"><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--fog)">Laddar...</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div id="tab-reports" style="display:none">
+      <div class="admin-header"><h1>Anmälningar</h1><p>Hantera rapporter om misstänkt beteende</p></div>
+      <div class="data-table">
+        <div class="table-header"><h3>Öppna anmälningar</h3></div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th>Anmälare</th><th>Anmäld</th><th>Orsak</th><th>Status</th><th>Datum</th><th>Åtgärd</th></tr></thead>
+          <tbody id="reports-tbody"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--fog)">Laddar...</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- MATCHES TAB -->
+    <div id="tab-matches" style="display:none">
+      <div class="admin-header"><h1>Matchningar</h1><p>Översikt av alla matchningar på plattformen</p></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem">
+        <div class="stat-card"><div class="stat-card-num" id="ms-total">—</div><div class="stat-card-label">Totala interaktioner</div></div>
+        <div class="stat-card"><div class="stat-card-num" id="ms-mutual">—</div><div class="stat-card-label">Ömsesidiga matchn.</div></div>
+        <div class="stat-card"><div class="stat-card-num" id="ms-rate">—</div><div class="stat-card-label">Matchningsgrad</div></div>
+        <div class="stat-card"><div class="stat-card-num" id="ms-msgs">—</div><div class="stat-card-label">Meddelanden skickade</div></div>
+      </div>
+      <div class="data-table" style="padding:2rem;text-align:center;color:var(--fog)">Detaljerad matchningsanalys visas här.</div>
+    </div>
+  </main>
+</div>
+
+<div id="toast"><div class="toast-icon"></div><div><div class="toast-title"></div><div class="toast-desc"></div></div></div>
+
+<script src="../js/api.js"></script>
+<script>
+requireAuth();
+if(!Auth.isAdmin()) window.location.href='app.html';
+initNav();
+document.getElementById('admin-date').textContent=new Date().toLocaleDateString('sv-SE',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+let userPage=1, userFilter='all', searchQuery='', searchTimeout;
+
+function showTab(name, link){
+  document.querySelectorAll('[id^="tab-"]').forEach(t=>t.style.display='none');
+  document.getElementById('tab-'+name).style.display='block';
+  document.querySelectorAll('.admin-nav a').forEach(a=>a.classList.remove('active'));
+  if(link) link.classList.add('active');
+  if(name==='users') loadUsers();
+  if(name==='payments') loadPayments();
+  if(name==='reports') loadReports();
+  if(name==='matches') loadMatchStats();
+}
+
+async function loadStats(){
+  try{
+    const s=await get('/admin/stats');
+    document.getElementById('s-users').textContent=parseInt(s.users.total).toLocaleString('sv-SE');
+    document.getElementById('s-active').textContent=parseInt(s.users.active).toLocaleString('sv-SE');
+    document.getElementById('s-matches').textContent=parseInt(s.matches.total).toLocaleString('sv-SE');
+    document.getElementById('s-mutual').textContent=parseInt(s.matches.mutual).toLocaleString('sv-SE');
+    document.getElementById('s-msgs').textContent=parseInt(s.messages.total).toLocaleString('sv-SE');
+    document.getElementById('s-revenue').textContent=parseInt(s.revenue.total/100).toLocaleString('sv-SE');
+    document.getElementById('s-today').textContent=`+${s.new_today.users_today} idag`;
+    document.getElementById('activity-log').innerHTML=`<div style="font-size:0.87rem;color:var(--fog)">✅ ${s.users.total} totala användare · ${s.matches.mutual} lyckade matchningar · ${s.users.banned} bannade konton</div>`;
+  }catch(e){ console.error(e); }
+}
+
+async function loadUsers(){
+  try{
+    const data=await get(`/admin/users?page=${userPage}&limit=25&search=${encodeURIComponent(searchQuery)}&filter=${userFilter}`);
+    document.getElementById('users-count').textContent=`(${data.total} totalt)`;
+    const EMOJIS=['🌲','❄️','🌊','🏔️','🌙'];
+    document.getElementById('users-tbody').innerHTML=data.users.map((u,i)=>`
+      <tr>
+        <td><div class="user-cell"><div class="user-av">${EMOJIS[i%EMOJIS.length]}</div><div><div style="font-size:0.9rem">${u.first_name||'—'}, ${u.age||'—'}</div><div style="font-size:0.74rem;color:var(--fog)">${u.city||'—'}</div></div></div></td>
+        <td style="color:var(--fog);font-size:0.84rem">${u.email}</td>
+        <td><span class="badge ${u.plan==='free'?'badge-aurora':'badge-gold'}">${u.plan}</span></td>
+        <td><span class="badge ${u.is_banned?'badge-danger':'badge-aurora'}">${u.is_banned?'Banned':u.is_active?'Aktiv':'Inaktiv'}</span></td>
+        <td style="color:var(--fog);font-size:0.82rem">${formatDate(u.created_at)}</td>
+        <td><div class="action-group">
+          ${u.is_banned
+            ?`<button class="act-btn success" onclick="unbanUser('${u.id}')">Avbanna</button>`
+            :`<button class="act-btn danger" onclick="banUser('${u.id}')">Banna</button>`}
+          <button class="act-btn danger" onclick="deleteUser('${u.id}')">Radera</button>
+        </div></td>
+      </tr>
+    `).join('') || '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--fog)">Inga användare hittades</td></tr>';
+
+    // Pagination
+    const pages=Math.ceil(data.total/25);
+    document.getElementById('users-pagination').innerHTML=
+      Array.from({length:Math.min(pages,7)},(_,i)=>`<button class="pg-btn ${userPage===i+1?'active':''}" onclick="gotoPage(${i+1})">${i+1}</button>`).join('');
+  }catch(e){ toast('❌','Fel',e.message); }
+}
+
+async function loadPayments(){
+  try{
+    const data=await get('/admin/payments');
+    document.getElementById('payments-tbody').innerHTML=data.map(p=>`
+      <tr>
+        <td style="font-size:0.87rem">${p.first_name||'—'}<br><span style="color:var(--fog);font-size:0.78rem">${p.email}</span></td>
+        <td><span class="badge badge-gold">${p.plan}</span></td>
+        <td style="color:var(--success);font-weight:500">${(p.amount/100).toLocaleString('sv-SE')} SEK</td>
+        <td><span class="badge ${p.status==='succeeded'?'badge-aurora':'badge-danger'}">${p.status}</span></td>
+        <td style="color:var(--fog);font-size:0.82rem">${formatDate(p.created_at)}</td>
+      </tr>
+    `).join('') || '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--fog)">Inga betalningar</td></tr>';
+  }catch(e){}
+}
+
+async function loadReports(){
+  try{
+    const data=await get('/admin/reports');
+    document.getElementById('reports-tbody').innerHTML=data.map(r=>`
+      <tr>
+        <td style="font-size:0.87rem">${r.reporter_name||'—'}</td>
+        <td style="font-size:0.87rem">${r.reported_name||'—'}</td>
+        <td style="font-size:0.84rem;color:var(--fog)">${r.reason||'—'}</td>
+        <td><span class="badge ${r.status==='pending'?'badge-danger':'badge-aurora'}">${r.status}</span></td>
+        <td style="font-size:0.82rem;color:var(--fog)">${formatDate(r.created_at)}</td>
+        <td><div class="action-group">
+          <button class="act-btn success" onclick="resolveReport('${r.id}','resolved')">Lös</button>
+          <button class="act-btn" onclick="resolveReport('${r.id}','dismissed')">Avfärda</button>
+        </div></td>
+      </tr>
+    `).join('') || '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--fog)">Inga anmälningar</td></tr>';
+  }catch(e){}
+}
+
+async function loadMatchStats(){
+  try{
+    const s=await get('/admin/stats');
+    document.getElementById('ms-total').textContent=parseInt(s.matches.total).toLocaleString('sv-SE');
+    document.getElementById('ms-mutual').textContent=parseInt(s.matches.mutual).toLocaleString('sv-SE');
+    const rate=s.matches.total>0?Math.round((s.matches.mutual/s.matches.total)*100):0;
+    document.getElementById('ms-rate').textContent=rate+'%';
+    document.getElementById('ms-msgs').textContent=parseInt(s.messages.total).toLocaleString('sv-SE');
+  }catch{}
+}
+
+function debounceSearch(v){ clearTimeout(searchTimeout); searchTimeout=setTimeout(()=>{ searchQuery=v; userPage=1; loadUsers(); },400); }
+function setUserFilter(btn,f){ document.querySelectorAll('[data-ufilter]').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); userFilter=f; userPage=1; loadUsers(); }
+function gotoPage(p){ userPage=p; loadUsers(); }
+
+async function banUser(id){
+  if(!confirm('Banna denna användare?')) return;
+  try{ await put(`/admin/users/${id}/ban`,{ban_reason:'Policy violation'}); toast('✅','Användare bannad',''); loadUsers(); }catch(e){ toast('❌','Fel',e.message); }
+}
+async function unbanUser(id){
+  try{ await put(`/admin/users/${id}/unban`,{}); toast('✅','Användare avbannad',''); loadUsers(); }catch(e){ toast('❌','Fel',e.message); }
+}
+async function deleteUser(id){
+  if(!confirm('Radera permanent? Kan inte ångras!')) return;
+  try{ await del(`/admin/users/${id}`); toast('🗑','Användare raderad',''); loadUsers(); }catch(e){ toast('❌','Fel',e.message); }
+}
+async function resolveReport(id,status){
+  try{ await put(`/admin/reports/${id}`,{status}); toast('✅','Anmälan uppdaterad',''); loadReports(); }catch(e){ toast('❌','Fel',e.message); }
+}
+
+async function initAdminUser(){
+  try{ const me=await get('/auth/me'); document.getElementById('nav-avatar').textContent=(me.first_name||me.email)[0].toUpperCase(); }catch{}
+}
+
+initAdminUser(); loadStats();
+</script>
+</body>
+</html>

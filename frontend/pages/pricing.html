@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Priser — Själ & Hjärta</title>
+<link rel="stylesheet" href="../css/shared.css">
+<style>
+.pricing-page { max-width:1000px; margin:0 auto; padding:5rem 5% 4rem; text-align:center; }
+.pricing-header { margin-bottom:4rem; }
+.pricing-header h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,5vw,4.5rem); font-weight:300; line-height:1.1; margin-bottom:1rem; }
+.pricing-header h1 em { font-style:italic; color:var(--aurora1); }
+.pricing-header p { color:var(--fog); font-size:1rem; max-width:480px; margin:0 auto; line-height:1.65; }
+
+.billing-toggle { display:inline-flex; background:var(--glass); border:1px solid var(--glass-border); border-radius:100px; padding:0.3rem; margin-bottom:3rem; }
+.billing-btn { padding:0.45rem 1.4rem; border-radius:100px; border:none; font-size:0.85rem; cursor:pointer; color:var(--fog); background:none; transition:all 0.3s; }
+.billing-btn.active { background:linear-gradient(135deg,var(--aurora1),var(--aurora2)); color:var(--midnight); font-weight:500; }
+.save-badge { background:rgba(94,189,138,0.15); color:var(--success); border:1px solid rgba(94,189,138,0.25); border-radius:100px; padding:0.15rem 0.5rem; font-size:0.7rem; margin-left:0.3rem; }
+
+.plans-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-bottom:4rem; }
+.plan-card { background:var(--surface); border:1px solid var(--glass-border); border-radius:24px; padding:2.2rem 2rem; text-align:left; position:relative; transition:transform 0.4s var(--ease), box-shadow 0.4s; }
+.plan-card:hover { transform:translateY(-6px); box-shadow:0 24px 60px rgba(0,0,0,0.3); }
+.plan-card.featured { border-color:rgba(127,191,170,0.35); background:linear-gradient(160deg,rgba(127,191,170,0.06),rgba(168,196,212,0.06)); }
+.plan-popular { position:absolute; top:-1px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,var(--aurora1),var(--aurora2)); color:var(--midnight); padding:0.3rem 1.2rem; border-radius:0 0 14px 14px; font-size:0.73rem; font-weight:600; letter-spacing:0.06em; white-space:nowrap; }
+.plan-name { font-size:0.8rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--fog); margin-bottom:0.6rem; }
+.plan-price { font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; line-height:1; color:var(--snow); margin-bottom:0.3rem; }
+.plan-price span { font-size:1rem; color:var(--fog); font-family:'DM Sans',sans-serif; }
+.plan-period { font-size:0.78rem; color:var(--fog); margin-bottom:1.8rem; }
+.plan-cta { width:100%; margin-bottom:2rem; }
+.plan-features { list-style:none; display:flex; flex-direction:column; gap:0.7rem; }
+.plan-features li { display:flex; align-items:flex-start; gap:0.7rem; font-size:0.87rem; color:var(--birch); }
+.plan-features li::before { content:'✓'; color:var(--aurora1); flex-shrink:0; font-weight:600; }
+.plan-features li.no::before { content:'✗'; color:var(--fog); }
+.plan-features li.no { color:var(--fog); }
+
+.faq { text-align:left; max-width:680px; margin:0 auto; }
+.faq h2 { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; text-align:center; margin-bottom:2.5rem; }
+.faq-item { border-bottom:1px solid var(--glass-border); }
+.faq-q { padding:1.2rem 0; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-size:0.95rem; font-weight:400; }
+.faq-q:hover { color:var(--aurora1); }
+.faq-arrow { font-size:0.8rem; transition:transform 0.3s; color:var(--fog); }
+.faq-a { max-height:0; overflow:hidden; transition:max-height 0.4s var(--ease), padding 0.3s; }
+.faq-a.open { max-height:200px; padding-bottom:1rem; }
+.faq-a p { font-size:0.87rem; color:var(--fog); line-height:1.65; }
+.faq-item.open .faq-arrow { transform:rotate(180deg); }
+
+@media(max-width:800px){ .plans-grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="aurora"><span></span><span></span><span></span></div>
+
+<nav class="nav z2">
+  <a class="nav-logo" href="../index.html">Själ <em>&</em> Hjärta</a>
+  <ul class="nav-links">
+    <li><a href="app.html">Upptäck</a></li>
+    <li><a href="matches.html">Matchningar</a></li>
+    <li><a href="profile.html">Profil</a></li>
+    <li><a href="pricing.html" class="active">Priser</a></li>
+  </ul>
+  <div class="nav-user">
+    <div class="nav-avatar" id="nav-avatar" onclick="window.location='profile.html'"></div>
+    <button class="btn btn-ghost btn-sm" data-action="logout">Logga ut</button>
+  </div>
+</nav>
+
+<div class="page z2">
+<div class="pricing-page">
+  <div class="pricing-header">
+    <span class="section-tag">✦ Prissättning</span>
+    <h1>Välj ditt <em>plan</em></h1>
+    <p>Börja gratis. Uppgradera när du är redo för djupare matchningar och AI-stöd.</p>
+  </div>
+
+  <div class="billing-toggle">
+    <button class="billing-btn active" id="bill-monthly" onclick="setBilling('monthly')">Månadsvis</button>
+    <button class="billing-btn" id="bill-yearly" onclick="setBilling('yearly')">Årsvis <span class="save-badge">Spara 20%</span></button>
+  </div>
+
+  <div class="plans-grid">
+    <!-- FREE -->
+    <div class="plan-card">
+      <div class="plan-name">Gratis</div>
+      <div class="plan-price">0 <span>SEK</span></div>
+      <div class="plan-period">för alltid</div>
+      <button class="btn btn-ghost plan-cta" onclick="window.location='../index.html'">Börja gratis</button>
+      <ul class="plan-features">
+        <li>10 gillar per dag</li>
+        <li>Grundläggande matchningar</li>
+        <li>Skicka meddelanden till matchningar</li>
+        <li class="no">Se vem som gillar dig</li>
+        <li class="no">AI-chattcoach</li>
+        <li class="no">Super Likes</li>
+        <li class="no">Prioriterad matchning</li>
+      </ul>
+    </div>
+
+    <!-- PLUS -->
+    <div class="plan-card featured">
+      <div class="plan-popular">MEST POPULÄR</div>
+      <div class="plan-name">Plus</div>
+      <div class="plan-price" id="plus-price">199 <span>SEK</span></div>
+      <div class="plan-period" id="plus-period">per månad</div>
+      <button class="btn btn-primary plan-cta" onclick="checkout('plus')">Välj Plus →</button>
+      <ul class="plan-features">
+        <li>Obegränsade gillar</li>
+        <li>Se vem som gillar dig</li>
+        <li>AI-chattcoach (Stella)</li>
+        <li>5 Super Likes per dag</li>
+        <li>Profilpoängsanalys</li>
+        <li class="no">Prioriterad matchning</li>
+        <li class="no">Obegränsade Super Likes</li>
+      </ul>
+    </div>
+
+    <!-- PREMIUM -->
+    <div class="plan-card">
+      <div class="plan-name">Premium</div>
+      <div class="plan-price" id="prem-price">349 <span>SEK</span></div>
+      <div class="plan-period" id="prem-period">per månad</div>
+      <button class="btn btn-ghost plan-cta" onclick="checkout('premium')">Välj Premium →</button>
+      <ul class="plan-features">
+        <li>Allt i Plus</li>
+        <li>Prioriterad matchning</li>
+        <li>Profil boost (1/vecka)</li>
+        <li>Obegränsade Super Likes</li>
+        <li>Avancerad AI-analys</li>
+        <li>Personlig datingstylist</li>
+        <li>Exklusiva events</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq">
+    <h2>Vanliga <em style="font-style:italic;color:var(--aurora1)">frågor</em></h2>
+    ${[
+      ['Kan jag avsluta när som helst?', 'Ja, du kan avsluta din prenumeration när som helst. Du behåller dina förmåner fram till perioden slut.'],
+      ['Hur fungerar AI-matchningen?', 'Vår AI analyserar dina intressen, värderingar, kommunikationsstil och livsmål för att beräkna kompatibilitet med potentiella partners.'],
+      ['Är mina uppgifter säkra?', 'Absolut. Vi följer GDPR strikt, krypterar all data och säljer aldrig personuppgifter till tredje part.'],
+      ['Vad är Super Likes?', 'Super Likes visar att du är extra intresserad av en person. De syns ut i mängden och ökar chansen att bli matchad.'],
+    ].map(([q,a])=>`<div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">${q}<span class="faq-arrow">▼</span></div><div class="faq-a"><p>${a}</p></div></div>`).join('')}
+  </div>
+</div>
+</div>
+
+<div id="toast"><div class="toast-icon"></div><div><div class="toast-title"></div><div class="toast-desc"></div></div></div>
+
+<script src="../js/api.js"></script>
+<script>
+let billing='monthly';
+initNav();
+async function initPage(){
+  if(Auth.isLoggedIn()){
+    try{ const me=await get('/auth/me'); document.getElementById('nav-avatar').textContent=(me.first_name||me.email)[0].toUpperCase(); }catch{}
+  }
+}
+function setBilling(type){
+  billing=type;
+  const isYearly=type==='yearly';
+  document.getElementById('bill-monthly').classList.toggle('active',!isYearly);
+  document.getElementById('bill-yearly').classList.toggle('active',isYearly);
+  document.getElementById('plus-price').innerHTML=`${isYearly?159:199} <span>SEK</span>`;
+  document.getElementById('prem-price').innerHTML=`${isYearly?279:349} <span>SEK</span>`;
+  document.getElementById('plus-period').textContent=isYearly?'per månad (faktureras årsvis)':'per månad';
+  document.getElementById('prem-period').textContent=isYearly?'per månad (faktureras årsvis)':'per månad';
+}
+async function checkout(plan){
+  if(!Auth.isLoggedIn()){ window.location.href='../index.html'; return; }
+  toast('⏳','Förbereder betalning...','Du skickas till Stripe');
+  try{
+    const r=await post('/subscriptions/checkout',{plan});
+    if(r.checkout_url) window.location.href=r.checkout_url;
+    else toast('❌','Fel','Betalning inte konfigurerad ännu.');
+  }catch(e){ toast('❌','Fel',e.message); }
+}
+function toggleFaq(item){
+  const a=item.querySelector('.faq-a');
+  a.classList.toggle('open');
+  item.classList.toggle('open');
+}
+initPage();
+</script>
+</body>
+</html>
