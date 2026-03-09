@@ -26,8 +26,6 @@ app.use(helmet({
   crossOriginResourcePolicy: false,
   crossOriginOpenerPolicy: false,
 }));
-  methods: ['GET','POST','PUT','DELETE','PATCH','OPTIONS'],
-}));
 app.options('*', cors());
 
 // ── Rate limiting ──
