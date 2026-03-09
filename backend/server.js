@@ -18,10 +18,11 @@ if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 // ── Security ──
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: true,
   credentials: true,
-  methods: ['GET','POST','PUT','DELETE','PATCH'],
+  methods: ['GET','POST','PUT','DELETE','PATCH','OPTIONS'],
 }));
+app.options('*', cors());
 
 // ── Rate limiting ──
 const apiLimiter = rateLimit({
