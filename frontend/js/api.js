@@ -1,5 +1,5 @@
-// js/api.js — Shared utilities for all pages
 const API = 'https://sjalhjarta-production-6404.up.railway.app/api';
+// js/api.js — Shared utilities for all pages
 
 // ── Token Management ──
 const Auth = {
