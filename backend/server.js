@@ -16,10 +16,16 @@ const uploadDir = process.env.UPLOAD_DIR || 'uploads';
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 // ── Security ──
-app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors({
-  origin: true,
-  credentials: true,
+  origin: '*',
+  methods: ['GET','POST','PUT','DELETE','PATCH','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
+}));
+app.options('*', cors());
+app.use(helmet({ 
+  crossOriginResourcePolicy: false,
+  crossOriginOpenerPolicy: false,
+}));
   methods: ['GET','POST','PUT','DELETE','PATCH','OPTIONS'],
 }));
 app.options('*', cors());
